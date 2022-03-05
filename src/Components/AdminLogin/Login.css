@@ -1,0 +1,41 @@
+.main-div {
+    display: flex;
+    justify-content: center;
+  }
+  .login {
+    background-color: white;
+    align-items: center;
+    height: 31em;
+    width: 40em;
+    padding: 5em;
+    margin-top: 5em;
+  }
+  .signup {
+    background-color: white;
+    align-items: center;
+    height: 36em;
+    width: 40em;
+    padding: 2em 4em;
+    margin-top: 5em;
+  }
+  
+  .login-btn {
+    background-color: #e64245;
+    color: white;
+    margin-top: 1em;
+    width: 8em;
+  }
+  
+  .login-btn:hover {
+    color: white;
+  }
+  
+  .errors{
+    color: red;
+    font-size: 13px;
+    justify-content: start;
+  }
+  .shade{
+    color: #e64245;
+  }
+  
