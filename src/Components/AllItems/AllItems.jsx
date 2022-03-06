@@ -3,11 +3,13 @@ import {
   Box,
   Fade,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Modal,
   Paper,
   Select,
+  Switch,
   Table,
   TableBody,
   TableContainer,
@@ -18,7 +20,9 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { addNewItem, getCategory, getItems } from '../../api/adminApi';
+import { useNavigate } from 'react-router';
+import Swal from 'sweetalert2';
+import { addNewItem, deleteItemWithID, getCategory, getItems, changeAvailability } from '../../api/adminApi';
 // importing table and modal styles from constants folder
 import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
 // Importing validation error messages from constants folder
@@ -30,8 +34,10 @@ export default function TeacherTable() {
   const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
   const [swalShow, setSwalShow] = useState(false);
+  // const [checked, setChecked] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const navigate = useNavigate();
 
   // React hook form
   const {
@@ -50,7 +56,7 @@ export default function TeacherTable() {
   // Function for get all item
   const getAllItems = () => {
     getItems().then((res) => {
-      setItems(res.items)
+      setItems(res.items);
     });
   };
   // Function for get all categories
@@ -59,14 +65,45 @@ export default function TeacherTable() {
       setCategories(res.categories);
     });
   };
+  // Delete item with ID
+  const deleteItem = (id) => {
+    setSwalShow(true);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteItemWithID(id)
+          .then((res) => {
+            setSwalShow(false);
+            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+          })
+          .catch((err) => {
+            setSwalShow(false);
+          });
+      }
+    });
+  };
+  const handleChange = (e, id) => {
+    setSwalShow(true);
+    changeAvailability(e.target.checked, id).then((res) => {
+      setSwalShow(false);
+    });
+  };
 
   useEffect(() => {
     getAllCategory();
     getAllItems();
-  }, [open]);
+  }, [open, swalShow]);
 
   return (
     <div>
+      <h2>All items</h2>
       <div className='mb-3 mt-2 ml-auto'>
         <button className='add-btn btn ' onClick={handleOpen}>
           Add new
@@ -82,6 +119,7 @@ export default function TeacherTable() {
               <StyledTableCell align='center'>Description</StyledTableCell>
               <StyledTableCell align='center'>Price</StyledTableCell>
               <StyledTableCell align='center'>Actions</StyledTableCell>
+              <StyledTableCell align='center'>Availability</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,9 +134,35 @@ export default function TeacherTable() {
                     <StyledTableCell align='center'>{obj.Description}</StyledTableCell>
                     <StyledTableCell align='center'>{obj.Price}</StyledTableCell>
                     <StyledTableCell align='center'>
-                      <button className='btn btn-danger' onClick={() => {}}>
+                      <button
+                        className='btn btn-primary edit-btn'
+                        onClick={() => {
+                          navigate(`/edit-item/${obj._id}`);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className='btn btn-danger'
+                        onClick={() => {
+                          deleteItem(obj._id);
+                        }}
+                      >
                         Delete
                       </button>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={obj.isAvailable}
+                            onChange={(e) => {
+                              handleChange(e, obj._id);
+                            }}
+                          />
+                        }
+                        label={obj.isAvailable ? 'available' : 'not available'}
+                      />
                     </StyledTableCell>
                   </StyledTableRow>
                 ))
@@ -106,6 +170,7 @@ export default function TeacherTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Modal for add new item */}
       <Modal
         aria-labelledby='transition-modal-title'
         aria-describedby='transition-modal-description'
@@ -184,6 +249,9 @@ export default function TeacherTable() {
           </Box>
         </Fade>
       </Modal>
+      {/* End of modal for add new item */}
+
+      {/* Modal for edit item */}
     </div>
   );
 }

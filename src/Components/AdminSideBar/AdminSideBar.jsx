@@ -73,7 +73,7 @@ export default function Sidebar() {
             button
             key={'Batches'}
             onClick={() => {
-              navigate('/add-ons');
+              navigate('/modifier');
             }}
           >
             <ListItemIcon>

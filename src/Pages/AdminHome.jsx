@@ -1,5 +1,5 @@
 import React from 'react';
-import AllItems from '../Components/AdminHome/AdminHome';
+import AllItems from '../Components/AllItems/AllItems';
 import AdminSideBar from '../Components/AdminSideBar/AdminSideBar';
 
 export default function AdminHome() {
