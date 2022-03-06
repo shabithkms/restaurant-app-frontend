@@ -1,24 +1,26 @@
 import React, { useEffect } from 'react';
-import AllItems from '../Components/AllItems/AllItems';
-import AdminSideBar from '../Components/AdminSideBar/AdminSideBar';
 import { useNavigate } from 'react-router';
+import AdminSideBar from '../Components/AdminSideBar/AdminSideBar';
+import AddNewItem from '../Components/AllItems/AddItem';
 
-export default function AdminHome() {
-  let navigate = useNavigate();
+function AddItem() {
+    let navigate = useNavigate();
   useEffect(() => {
     let admin = localStorage.getItem('admin');
     if (admin) {
-      navigate('/');
+      navigate('/add-item');
     } else {
       navigate('/login');
     }
   }, []);
   return (
-    <div className='d-flex'>
+    <div className=''>
       <AdminSideBar />
       <div className='p-5'>
-        <AllItems />
+        <AddNewItem />
       </div>
     </div>
   );
 }
+
+export default AddItem;
