@@ -97,3 +97,108 @@ export const getItems = () => {
       });
   });
 };
+
+// Delete item with id
+export const deleteItemWithID = (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${ADMIN_BASE_URL}/delete-item`, { data: { id } })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.errors);
+      });
+  });
+};
+
+// get item details with id
+export const getItemDetailsWithID = (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${ADMIN_BASE_URL}/get-item-details/${id}`)
+      .then((res) => {
+        resolve(res.data.item);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
+};
+// Edit the item details
+
+export const editItemDetails = (formData) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`${ADMIN_BASE_URL}/edit-item`, { formData })
+      .then((res) => {
+        toast.success(res.data.message);
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+};
+// Change availability of item
+export const changeAvailability = (status, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`${ADMIN_BASE_URL}/change-item-status`, { status, id })
+      .then((res) => {
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+};
+
+// Modifier management
+// Add  new modifier
+export const addNewModifier = (formData) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${ADMIN_BASE_URL}/add-new-modifier`, formData)
+      .then((res) => {
+        toast.success(res.data.message);
+        resolve();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.errors);
+        reject();
+      });
+  });
+};
+
+export const getAllModifiers = () => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${ADMIN_BASE_URL}/get-modifiers`)
+      .then((res) => {
+        resolve(res.data.modifiers);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject();
+      });
+  });
+};
+
+export const deleteModifierWithID = (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${ADMIN_BASE_URL}/delete-modifier`, { data: { id } })
+      .then((res) => {
+        console.log(res);
+        resolve();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.errors);
+        reject();
+        console.log(err);
+      });
+  });
+};
