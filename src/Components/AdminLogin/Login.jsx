@@ -1,10 +1,10 @@
-import React from 'react';
-import './Login.css';
 import { TextField } from '@mui/material';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import Validation from '../../constants/validation';
-import { adminLogin } from '../../api/adminApi';
 import { useNavigate } from 'react-router-dom';
+import { adminLogin } from '../../api/adminApi';
+import Validation from '../../constants/validation';
+import './Login.css';
 
 function Login() {
   // React hook form for form validation
@@ -19,7 +19,8 @@ function Login() {
   // Admin login function
   const doAdminLogin = (data) => {
     // Call api for admin login
-    adminLogin(data).then(() => {
+    adminLogin(data).then((admin) => {
+      localStorage.setItem('admin', JSON.stringify(admin));
       navigate('/');
     });
   };

@@ -1,10 +1,10 @@
-import './App.css';
 import { Toaster } from 'react-hot-toast';
-import { Routes, Route } from 'react-router-dom';
-import AdminLogin from './Pages/AdminLogin';
+import { Route, Routes } from 'react-router-dom';
+import './App.css';
 import HomePage from './Pages/AdminHome';
-import EditItem from './Pages/EditItem';
+import AdminLogin from './Pages/AdminLogin';
 import AddCategory from './Pages/Categories';
+import EditItem from './Pages/EditItem';
 import Modifiers from './Pages/Modifiers';
 
 function App() {

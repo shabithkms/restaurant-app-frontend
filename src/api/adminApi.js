@@ -10,7 +10,7 @@ export const adminLogin = (formData) => {
       .post(`${ADMIN_BASE_URL}/login`, formData)
       .then((res) => {
         console.log(res.data.admin);
-        resolve(res);
+        resolve(res.data.admin);
       })
       .catch((err) => {
         toast.error(err.response.data.errors);
@@ -226,6 +226,7 @@ export const editModifier = (formData) => {
       })
       .catch((err) => {
         console.log(err);
+        toast.error(err.response.data.errors)
         reject();
       });
   });

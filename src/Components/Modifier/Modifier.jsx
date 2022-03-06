@@ -36,7 +36,10 @@ export default function TeacherTable() {
 
   const [swalShow, setSwalShow] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setModifier(null);
+    setOpen(false);
+  };
 
   // React hook form
   const {
@@ -62,6 +65,7 @@ export default function TeacherTable() {
   };
   // Handle edit Modal
   const handleEditModal = (id) => {
+    reset();
     getModifierDetails(id).then((res) => {
       setId(id);
       setModifier(res);
@@ -73,6 +77,8 @@ export default function TeacherTable() {
     data.id = id;
     editModifier(data).then(() => {
       setEditModalOpen(false);
+      setModifier(null);
+      reset();
       setId(null);
     });
   };
@@ -103,7 +109,7 @@ export default function TeacherTable() {
 
   useEffect(() => {
     getModifiers();
-  }, [open, swalShow, editModalOpen]);
+  }, [open, swalShow, editModalOpen,modifier]);
 
   return (
     <div>
@@ -211,7 +217,11 @@ export default function TeacherTable() {
         aria-labelledby='transition-modal-title'
         aria-describedby='transition-modal-description'
         open={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
+        onClose={() => {
+          reset();
+          setEditModalOpen(false);
+          setModifier(null);
+        }}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -251,7 +261,7 @@ export default function TeacherTable() {
               />
               {errors.Price && <span className='error'>{errors.Price.message}</span>}
               <center>
-                <button className='btn login-btn'>Add</button>
+                <button className='btn login-btn'>Update</button>
               </center>
             </form>
           </Box>

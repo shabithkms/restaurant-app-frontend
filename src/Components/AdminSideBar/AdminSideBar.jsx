@@ -42,7 +42,7 @@ export default function Sidebar() {
         open={true}
       >
         <DrawerHeader>
-          <h3 className='logo'>FOOD APP.</h3>
+          <h3 className='logo'>Menu.</h3>
         </DrawerHeader>
         <List className='mt-5'>
           <ListItem

@@ -16,13 +16,13 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
+  Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
-import { addNewItem, deleteItemWithID, getCategory, getItems, changeAvailability } from '../../api/adminApi';
+import { addNewItem, changeAvailability, deleteItemWithID, getCategory, getItems } from '../../api/adminApi';
 // importing table and modal styles from constants folder
 import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
 // Importing validation error messages from constants folder
@@ -118,8 +118,8 @@ export default function TeacherTable() {
               <StyledTableCell align='center'>Category</StyledTableCell>
               <StyledTableCell align='center'>Description</StyledTableCell>
               <StyledTableCell align='center'>Price</StyledTableCell>
-              <StyledTableCell align='center'>Actions</StyledTableCell>
               <StyledTableCell align='center'>Availability</StyledTableCell>
+              <StyledTableCell align='center'>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -133,6 +133,19 @@ export default function TeacherTable() {
                     <StyledTableCell align='center'>{obj.Category}</StyledTableCell>
                     <StyledTableCell align='center'>{obj.Description}</StyledTableCell>
                     <StyledTableCell align='center'>{obj.Price}</StyledTableCell>
+                    <StyledTableCell>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={obj.isAvailable}
+                            onChange={(e) => {
+                              handleChange(e, obj._id);
+                            }}
+                          />
+                        }
+                        label={obj.isAvailable ? 'available' : 'not available'}
+                      />
+                    </StyledTableCell>
                     <StyledTableCell align='center'>
                       <button
                         className='btn btn-primary edit-btn'
@@ -150,19 +163,6 @@ export default function TeacherTable() {
                       >
                         Delete
                       </button>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={obj.isAvailable}
-                            onChange={(e) => {
-                              handleChange(e, obj._id);
-                            }}
-                          />
-                        }
-                        label={obj.isAvailable ? 'available' : 'not available'}
-                      />
                     </StyledTableCell>
                   </StyledTableRow>
                 ))
@@ -208,7 +208,7 @@ export default function TeacherTable() {
                   labelId='demo-simple-select-label'
                   id='demo-simple-select'
                   {...register('Category', { required: Validation.Errors.REQUIRED_ERROR })}
-                  label='select Category'
+                  label=' Category'
                 >
                   {categories ? (
                     categories.map((obj) => (
