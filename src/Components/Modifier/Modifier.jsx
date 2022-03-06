@@ -15,7 +15,13 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
-import { addNewModifier, deleteItemWithID, deleteModifierWithID, getAllModifiers, getItems } from '../../api/adminApi';
+import {
+  addNewModifier,
+  deleteModifierWithID,
+  editModifier,
+  getAllModifiers,
+  getModifierDetails,
+} from '../../api/adminApi';
 // importing table and modal styles from constants folder
 import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
 // Importing validation error messages from constants folder
@@ -23,7 +29,11 @@ import Validation from '../../constants/validation';
 
 export default function TeacherTable() {
   const [modifiers, setModifiers] = useState([]);
+  const [modifier, setModifier] = useState(null);
+  const [id, setId] = useState(null);
   const [open, setOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [swalShow, setSwalShow] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -42,14 +52,31 @@ export default function TeacherTable() {
     addNewModifier(data).then((res) => {
       handleClose();
       reset();
-    })  
+    });
   };
   // Function for get all item
   const getModifiers = () => {
     getAllModifiers().then((res) => {
       setModifiers(res);
-    })
+    });
   };
+  // Handle edit Modal
+  const handleEditModal = (id) => {
+    getModifierDetails(id).then((res) => {
+      setId(id);
+      setModifier(res);
+      setEditModalOpen(true);
+    });
+  };
+  // Edit modifier function
+  const editItem = (data) => {
+    data.id = id;
+    editModifier(data).then(() => {
+      setEditModalOpen(false);
+      setId(null);
+    });
+  };
+  // Delete modifier with id
   const deleteItem = (id) => {
     setSwalShow(true);
     Swal.fire({
@@ -76,7 +103,7 @@ export default function TeacherTable() {
 
   useEffect(() => {
     getModifiers();
-  }, [open, swalShow]);
+  }, [open, swalShow, editModalOpen]);
 
   return (
     <div>
@@ -109,7 +136,7 @@ export default function TeacherTable() {
                       <button
                         className='btn btn-primary edit-btn'
                         onClick={() => {
-                          // editItem(obj._id);
+                          handleEditModal(obj._id);
                         }}
                       >
                         Edit
@@ -129,6 +156,7 @@ export default function TeacherTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Modal for add new item */}
       <Modal
         aria-labelledby='transition-modal-title'
         aria-describedby='transition-modal-description'
@@ -152,8 +180,8 @@ export default function TeacherTable() {
                 {...register('Name', {
                   required: Validation.Errors.REQUIRED_ERROR,
                   minLength: {
-                    value: 4,
-                    message: Validation.MinLength(4),
+                    value: 3,
+                    message: Validation.MinLength(3),
                   },
                 })}
                 label='Name'
@@ -163,6 +191,58 @@ export default function TeacherTable() {
               <TextField
                 margin='normal'
                 fullWidth
+                {...register('Price', {
+                  required: Validation.Errors.REQUIRED_ERROR,
+                })}
+                label=' Price'
+                type='number'
+              />
+              {errors.Price && <span className='error'>{errors.Price.message}</span>}
+              <center>
+                <button className='btn login-btn'>Add</button>
+              </center>
+            </form>
+          </Box>
+        </Fade>
+      </Modal>
+
+      {/* Modal for edit item */}
+      <Modal
+        aria-labelledby='transition-modal-title'
+        aria-describedby='transition-modal-description'
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={editModalOpen}>
+          <Box sx={style} className='container ' onSubmit={handleSubmit(editItem)}>
+            <Typography id='transition-modal-title' variant='h3' align='center' component='h1' fontWeight={'500'}>
+              Edit Modifier
+            </Typography>
+            <form>
+              <TextField
+                margin='normal'
+                fullWidth
+                defaultValue={modifier?.Name}
+                {...register('Name', {
+                  required: Validation.Errors.REQUIRED_ERROR,
+                  minLength: {
+                    value: 3,
+                    message: Validation.MinLength(3),
+                  },
+                })}
+                label='Name'
+                type='text'
+              />
+              {errors.Name && <span className='error'>{errors.Name.message}</span>}
+              <TextField
+                margin='normal'
+                fullWidth
+                defaultValue={modifier?.Price}
                 {...register('Price', {
                   required: Validation.Errors.REQUIRED_ERROR,
                 })}

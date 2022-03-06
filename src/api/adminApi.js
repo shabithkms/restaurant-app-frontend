@@ -202,3 +202,31 @@ export const deleteModifierWithID = (id) => {
       });
   });
 };
+
+export const getModifierDetails = (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${ADMIN_BASE_URL}/get-modifier-details/${id}`)
+      .then((res) => {
+        resolve(res.data.modifier);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+};
+
+export const editModifier = (formData) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`${ADMIN_BASE_URL}/edit-modifier`, { formData })
+      .then((res) => {
+        toast.success(res.data.message);
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+        reject();
+      });
+  });
+};
