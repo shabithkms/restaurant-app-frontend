@@ -1,3 +1,4 @@
+import { DeleteOutline, Edit } from '@mui/icons-material';
 import {
   Backdrop,
   Box,
@@ -10,7 +11,7 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
+  Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,7 +21,7 @@ import {
   deleteModifierWithID,
   editModifier,
   getAllModifiers,
-  getModifierDetails,
+  getModifierDetails
 } from '../../api/adminApi';
 // importing table and modal styles from constants folder
 import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
@@ -109,7 +110,7 @@ export default function TeacherTable() {
 
   useEffect(() => {
     getModifiers();
-  }, [open, swalShow, editModalOpen,modifier]);
+  }, [open, swalShow, editModalOpen, modifier]);
 
   return (
     <div>
@@ -145,7 +146,7 @@ export default function TeacherTable() {
                           handleEditModal(obj._id);
                         }}
                       >
-                        Edit
+                        <Edit />
                       </button>
                       <button
                         className='btn btn-danger'
@@ -153,7 +154,7 @@ export default function TeacherTable() {
                           deleteItem(obj._id);
                         }}
                       >
-                        Delete
+                        <DeleteOutline />
                       </button>
                     </StyledTableCell>
                   </StyledTableRow>

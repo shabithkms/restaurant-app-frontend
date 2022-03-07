@@ -6,6 +6,7 @@ import AdminLogin from './Pages/AdminLogin';
 import AddCategory from './Pages/Categories';
 import EditItem from './Pages/EditItem';
 import Modifiers from './Pages/Modifiers';
+import AddItem from './Pages/AddItem';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
       />
       <Routes>
         <Route exact path='/' element={<HomePage />} />
+        <Route exact path='/add-item' element={<AddItem />} />
         <Route exact path='/edit-item/:id' element={<EditItem />} />
         <Route path='/login' element={<AdminLogin />} />
         <Route path='/categories' element={<AddCategory />} />

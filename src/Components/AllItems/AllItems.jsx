@@ -18,6 +18,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import {DeleteOutline,Edit} from '@mui/icons-material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
@@ -153,7 +154,7 @@ export default function TeacherTable() {
                           navigate(`/edit-item/${obj._id}`);
                         }}
                       >
-                        Edit
+                        <Edit/>
                       </button>
                       <button
                         className='btn btn-danger'
@@ -161,7 +162,7 @@ export default function TeacherTable() {
                           deleteItem(obj._id);
                         }}
                       >
-                        Delete
+                        <DeleteOutline/>
                       </button>
                     </StyledTableCell>
                   </StyledTableRow>

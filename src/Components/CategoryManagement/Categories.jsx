@@ -1,15 +1,17 @@
+import { DeleteOutline } from '@mui/icons-material';
 import {
-    Backdrop,
-    Box,
-    Fade,
-    Modal,
-    Paper,
-    Table,
-    TableBody, TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Typography
+  Backdrop,
+  Box,
+  Fade,
+  Modal,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -18,7 +20,6 @@ import Swal from 'sweetalert2';
 import { addNewCategory, deleteCategoryWithID, getCategory } from '../../api/adminApi';
 // importing table and modal styles from constants folder
 import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
-
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -120,7 +121,7 @@ function Categories() {
                           deleteCategory(obj._id);
                         }}
                       >
-                        Delete
+                        <DeleteOutline />
                       </button>
                     </StyledTableCell>
                   </StyledTableRow>
