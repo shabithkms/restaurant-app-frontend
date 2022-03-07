@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField,Checkbox } from '@mui/material';
+import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, Checkbox } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { addNewItem, getAllModifiers, getCategory } from '../../api/adminApi';
@@ -30,12 +30,25 @@ function AddItem() {
   };
   // Function for add item
   const addItem = (data) => {
+    data.Modifiers = modifierItem;
     console.log(data);
-    // addNewItem(data).then((res) => {});
+    addNewItem(data).then((res) => {});
   };
-
-  const handleChange = (event) => {
-    setModifierItem(event.target.value);
+  // Handle modifiers
+  const handleChange = (e, id) => {
+    console.log(e.target.checked);
+    let value = e.target.checked;
+    let added = [...modifierItem];
+    if (value) {
+      added.push(id);
+    } else if (!value) {
+      if (added.includes(id)) {
+        let index = added.indexOf(id);
+        added.splice(index, 1);
+      }
+    }
+    setModifierItem(added);
+    console.log(added);
   };
   useEffect(() => {
     getModifiers();
@@ -88,7 +101,7 @@ function AddItem() {
               type='text'
             />
             {errors.Description && <span className='error'>{errors.Description.message}</span>}
-           
+
             <TextField
               margin='normal'
               name='Price'
@@ -100,39 +113,23 @@ function AddItem() {
               type='number'
             />
             {errors.Price && <span className='error'>{errors.Price.message}</span>}
-             {/* Add modifier */}
-             <div>
-              {/* <FormControl fullWidth className='mt-3'>
-                <InputLabel id='demo-simple-select-label'>Modifier</InputLabel>
-                <Select
-                  labelId='demo-simple-select-label'
-                  {...register('Modifier')}
-                  id='demo-simple-select'
-                  name='Modifier'
-                  label='Modifier'
-                  value={modifierItem}
-                  onChange={handleChange}
-                >
-                  {modifiers &&
-                    modifiers.map((obj, index) => {
-                      console.log(obj);
-                      return (
-                        <MenuItem key={index} value={obj?.Name || index}>
-                          {obj.Name}
-                          {` (Rs.${obj.Price})`}
-                        </MenuItem>
-                      );
-                    })}
-                </Select>
-                <button className='btn btn-primary add-modifier-btn'>Add</button>
-              </FormControl> */}
+            {/* Add modifier section */}
+            <div>
               <h6>Select modifiers :</h6>
-              {
-                modifiers && modifiers.map((obj)=>(
-                  <FormControlLabel control={
-                  <Checkbox  />} label={obj.Name}/>
-                ))
-              }
+              {modifiers &&
+                modifiers.map((obj, index) => (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        onChange={(e) => {
+                          handleChange(e, obj._id);
+                        }}
+                      />
+                    }
+                    label={obj.Name}
+                  />
+                ))}
             </div>
             {/* End of add modifier */}
             <center>
