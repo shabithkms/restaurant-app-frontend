@@ -1,69 +1,23 @@
-import {
-  Backdrop,
-  Box,
-  Fade,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Paper,
-  Select,
-  Switch,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography
-} from '@mui/material';
-import {DeleteOutline,Edit} from '@mui/icons-material';
+import { DeleteOutline, Edit } from '@mui/icons-material';
+import { FormControlLabel, Paper, Switch, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
-import { addNewItem, changeAvailability, deleteItemWithID, getCategory, getItems } from '../../api/adminApi';
+import { changeAvailability, deleteItemWithID, getItems } from '../../api/adminApi';
 // importing table and modal styles from constants folder
-import { style, StyledTableCell, StyledTableRow } from '../../constants/table-style';
-// Importing validation error messages from constants folder
-import Validation from '../../constants/validation';
+import { StyledTableCell, StyledTableRow } from '../../constants/table-style';
 import './AdminHome.css';
 
 export default function TeacherTable() {
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [open, setOpen] = useState(false);
   const [swalShow, setSwalShow] = useState(false);
-  // const [checked, setChecked] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const navigate = useNavigate();
 
-  // React hook form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: {} });
-
-  // Function for add new Item
-  const addItem = (data) => {
-    console.log(data);
-    addNewItem(data).then((res) => {
-      handleClose();
-    });
-  };
   // Function for get all item
   const getAllItems = () => {
     getItems().then((res) => {
+      console.log(res.items);
       setItems(res.items);
-    });
-  };
-  // Function for get all categories
-  const getAllCategory = () => {
-    getCategory().then((res) => {
-      setCategories(res.categories);
     });
   };
   // Delete item with ID
@@ -90,6 +44,7 @@ export default function TeacherTable() {
       }
     });
   };
+  // Change status of Item
   const handleChange = (e, id) => {
     setSwalShow(true);
     changeAvailability(e.target.checked, id).then((res) => {
@@ -98,15 +53,14 @@ export default function TeacherTable() {
   };
 
   useEffect(() => {
-    getAllCategory();
     getAllItems();
-  }, [open, swalShow]);
+  }, [swalShow]);
 
   return (
     <div>
       <h2>All items</h2>
       <div className='mb-3 mt-2 ml-auto'>
-        <button className='add-btn btn ' onClick={handleOpen}>
+        <button className='add-btn btn ' onClick={() => navigate('/add-item')}>
           Add new
         </button>
       </div>
@@ -118,6 +72,7 @@ export default function TeacherTable() {
               <StyledTableCell align='center'>Name</StyledTableCell>
               <StyledTableCell align='center'>Category</StyledTableCell>
               <StyledTableCell align='center'>Description</StyledTableCell>
+              <StyledTableCell align='center'>Modifiers</StyledTableCell>
               <StyledTableCell align='center'>Price</StyledTableCell>
               <StyledTableCell align='center'>Availability</StyledTableCell>
               <StyledTableCell align='center'>Actions</StyledTableCell>
@@ -126,14 +81,17 @@ export default function TeacherTable() {
           <TableBody>
             {items
               ? items.map((obj, index) => (
-                  <StyledTableRow key={index}>
+                  <StyledTableRow key={obj._id}>
                     <StyledTableCell component='th' scope='row'>
                       {index + 1}
                     </StyledTableCell>
                     <StyledTableCell align='center'>{obj.Name}</StyledTableCell>
                     <StyledTableCell align='center'>{obj.Category}</StyledTableCell>
                     <StyledTableCell align='center'>{obj.Description}</StyledTableCell>
-                    <StyledTableCell align='center'>{obj.Price}</StyledTableCell>
+                    <StyledTableCell align='center'>
+                      {obj.Modifiers.length ? obj.Modifiers.map((val) => <li>{val.Name}</li>) : 'None'}
+                    </StyledTableCell>
+                    <StyledTableCell align='center'>{obj.newPrice}</StyledTableCell>
                     <StyledTableCell>
                       <FormControlLabel
                         control={
@@ -154,7 +112,7 @@ export default function TeacherTable() {
                           navigate(`/edit-item/${obj._id}`);
                         }}
                       >
-                        <Edit/>
+                        <Edit />
                       </button>
                       <button
                         className='btn btn-danger'
@@ -162,7 +120,7 @@ export default function TeacherTable() {
                           deleteItem(obj._id);
                         }}
                       >
-                        <DeleteOutline/>
+                        <DeleteOutline />
                       </button>
                     </StyledTableCell>
                   </StyledTableRow>
@@ -171,88 +129,6 @@ export default function TeacherTable() {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Modal for add new item */}
-      <Modal
-        aria-labelledby='transition-modal-title'
-        aria-describedby='transition-modal-description'
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <Box sx={style} className='container ' onSubmit={handleSubmit(addItem)}>
-            <Typography id='transition-modal-title' variant='h3' align='center' component='h1' fontWeight={'500'}>
-              Add new Item
-            </Typography>
-            <form>
-              <TextField
-                margin='normal'
-                fullWidth
-                {...register('Name', {
-                  required: Validation.Errors.REQUIRED_ERROR,
-                  minLength: {
-                    value: 4,
-                    message: Validation.MinLength(4),
-                  },
-                })}
-                label='Item name'
-                type='text'
-              />
-              {errors.Name && <span className='error'>{errors.Name.message}</span>}
-              <FormControl fullWidth className='mt-3'>
-                <InputLabel id='demo-simple-select-label'>Category</InputLabel>
-                <Select
-                  labelId='demo-simple-select-label'
-                  id='demo-simple-select'
-                  {...register('Category', { required: Validation.Errors.REQUIRED_ERROR })}
-                  label=' Category'
-                >
-                  {categories ? (
-                    categories.map((obj) => (
-                      <MenuItem key={obj._id} value={obj.Name}>
-                        {obj.Name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <span>No Categories</span>
-                  )}
-                </Select>
-                {errors.Category && <span className='error'>{errors.Category.message}</span>}
-              </FormControl>
-              <TextField
-                margin='normal'
-                fullWidth
-                {...register('Description', {
-                  required: Validation.Errors.REQUIRED_ERROR,
-                })}
-                label=' Description'
-                type='text'
-              />
-              {errors.Description && <span className='error'>{errors.Description.message}</span>}
-              <TextField
-                margin='normal'
-                fullWidth
-                {...register('Price', {
-                  required: Validation.Errors.REQUIRED_ERROR,
-                })}
-                label=' Price'
-                type='number'
-              />
-              {errors.Price && <span className='error'>{errors.Price.message}</span>}
-              <center>
-                <button className='btn login-btn'>Add</button>
-              </center>
-            </form>
-          </Box>
-        </Fade>
-      </Modal>
-      {/* End of modal for add new item */}
-
-      {/* Modal for edit item */}
     </div>
   );
 }

@@ -1,13 +1,15 @@
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField, FormControlLabel, Checkbox } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { editItemDetails, getCategory, getItemDetailsWithID } from '../../api/adminApi';
+import { editItemDetails, getCategory, getItemDetailsWithID, getAllModifiers } from '../../api/adminApi';
 import Validation from '../../constants/validation';
 
 function EditItem() {
   const [categories, setCategories] = useState([]);
+  const [modifiers, setModifiers] = useState([]);
+  const [modifierItem, setModifierItem] = useState([]);
   const [item, setItem] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -34,13 +36,37 @@ function EditItem() {
   //   Function for edit item
   const editItem = (data) => {
     data.id = id;
+    data.newModifiers = modifierItem;
     editItemDetails(data).then((res) => {
       navigate('/');
     });
   };
 
+  // get all Modifiers
+  const getModifiers = () => {
+    getAllModifiers().then((res) => {
+      setModifiers(res);
+    });
+  };
+  // Handle modifiers
+  const handleChange = (e, id) => {
+    console.log(e.target.checked);
+    let value = e.target.checked;
+    let added = [...modifierItem];
+    if (value) {
+      added.push(id);
+    } else if (!value) {
+      if (added.includes(id)) {
+        let index = added.indexOf(id);
+        added.splice(index, 1);
+      }
+    }
+    setModifierItem(added);
+    console.log(added);
+  };
   useEffect(() => {
     getAllCategory();
+    getModifiers();
     getItemDetails();
   }, []);
 
@@ -112,6 +138,40 @@ function EditItem() {
               type='number'
             />
             {errors.Price && <span className='error'>{errors.Price.message}</span>}
+            <div>
+              {item.Modifiers.length? <h6>Modifiers already have:</h6>:''}
+              {item.Modifiers.map((obj, index) => (
+                <FormControlLabel
+                  key={index}
+                  checked={true}
+                  disabled={true}
+                  control={
+                    <Checkbox
+                      onChange={(e) => {
+                        handleChange(e, obj._id);
+                        console.log(obj._id);
+                      }}
+                    />
+                  }
+                  label={`${obj.Name}`}
+                />
+              ))}
+              <h6>Select new modifiers :</h6>
+              {modifiers &&
+                modifiers.map((obj, index) => (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        onChange={(e) => {
+                          handleChange(e, obj._id);
+                        }}
+                      />
+                    }
+                    label={`${obj.Name}`}
+                  />
+                ))}
+            </div>
             <center>
               <button className='btn login-btn'>Update</button>
             </center>
