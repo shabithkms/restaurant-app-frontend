@@ -1,14 +1,15 @@
-import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, Checkbox } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import { addNewItem, getAllModifiers, getCategory } from '../../api/adminApi';
 import Validation from '../../constants/validation';
 
 function AddItem() {
   const [categories, setCategories] = useState([]);
   const [modifiers, setModifiers] = useState([]);
-  const [formValues, setFormValues] = useState([]);
   const [modifierItem, setModifierItem] = useState([]);
+  const navigate = useNavigate();
 
   // React hook form for form validation
   const {
@@ -32,7 +33,9 @@ function AddItem() {
   const addItem = (data) => {
     data.Modifiers = modifierItem;
     console.log(data);
-    addNewItem(data).then((res) => {});
+    addNewItem(data).then((res) => {
+      navigate('/');
+    });
   };
   // Handle modifiers
   const handleChange = (e, id) => {
@@ -53,7 +56,7 @@ function AddItem() {
   useEffect(() => {
     getModifiers();
     getAllCategory();
-  }, [formValues]);
+  }, []);
   return (
     <div>
       <div className='main-div container'>
@@ -127,7 +130,7 @@ function AddItem() {
                         }}
                       />
                     }
-                    label={obj.Name}
+                    label={`${obj.Name}`}
                   />
                 ))}
             </div>
