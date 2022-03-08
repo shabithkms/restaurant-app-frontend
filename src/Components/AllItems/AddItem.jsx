@@ -111,6 +111,10 @@ function AddItem() {
               fullWidth
               {...register('Price', {
                 required: Validation.Errors.REQUIRED_ERROR,
+                min: {
+                  value: 1,
+                  message: Validation.Min(1),
+                },
               })}
               label=' Price'
               type='number'
