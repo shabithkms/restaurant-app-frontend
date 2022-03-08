@@ -71,7 +71,7 @@ function EditItem() {
   }, []);
 
   if (!item) {
-    return 'Data loading';
+    return <h5>Data Loading...</h5>;
   }
   return (
     <div>
